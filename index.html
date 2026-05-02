@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grupo Oraca — Prototipo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+
+    /* ─── VARIABLES ─────────────────────────────────────────────── */
+    :root {
+      --verde:       #1b4b36;
+      --verde-dark:  #122f22;
+      --verde-mid:   #2a6b4f;
+      --dorado:      #c9a84c;
+      --dorado-vivo: #e8c050;
+      --crema:       #f5f2ed;
+      --blanco:      #ffffff;
+      --texto:       #1c1c1c;
+      --texto-soft:  #5a5a5a;
+      --linea:       rgba(255,255,255,0.12);
+      --linea-clara: #e5e1d8;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--texto);
+      background: var(--blanco);
+      font-size: 1rem;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMACIONES — HERO ─────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-anim { opacity: 0; animation: fadeUp 0.8s ease forwards; }
+    .hero-anim-1 { animation-delay: 0.1s; }
+    .hero-anim-2 { animation-delay: 0.3s; }
+    .hero-anim-3 { animation-delay: 0.5s; }
+    .hero-anim-4 { animation-delay: 0.7s; }
+
+    /* ─── ANIMACIONES — SCROLL ───────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: 0.1s; }
+    .reveal.d2 { transition-delay: 0.2s; }
+    .reveal.d3 { transition-delay: 0.3s; }
+    .reveal.d4 { transition-delay: 0.4s; }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3rem;
+      height: 64px;
+      background: var(--verde-dark);
+      border-bottom: 1px solid var(--linea);
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blanco);
+      letter-spacing: 0.01em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--blanco); }
+    .nav-cta {
+      background: var(--dorado) !important;
+      color: var(--verde-dark) !important;
+      font-weight: 600 !important;
+      padding: 0.5rem 1.25rem;
+      border-radius: 2px;
+      transition: background 0.2s !important;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .nav-cta:hover { background: var(--dorado-vivo) !important; }
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--blanco);
+      padding: 0.5rem;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      background: var(--verde-dark);
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      padding-top: 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::after {
+      content: '';
+      position: absolute;
+      left: calc(100% - 360px);
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--dorado) 30%, var(--dorado) 70%, transparent);
+      opacity: 0.3;
+    }
+    .hero-main {
+      padding: 5rem 4rem 5rem 5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--dorado);
+      margin-bottom: 2rem;
+    }
+    .hero-headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.6rem, 4.5vw, 4.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--blanco);
+      margin-bottom: 2rem;
+      max-width: 680px;
+    }
+    .hero-headline em {
+      font-style: italic;
+      color: var(--dorado);
+    }
+    .hero-sub {
+      font-size: 1.0625rem;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.6);
+      max-width: 500px;
+      margin-bottom: 3rem;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--dorado);
+      color: var(--verde-dark);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      padding: 0.875rem 1.75rem;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      min-height: 44px;
+    }
+    .btn-primary:hover { background: var(--dorado-vivo); transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.875rem;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+      min-height: 44px;
+    }
+    .btn-secondary:hover { color: var(--blanco); border-color: rgba(255,255,255,0.6); }
+
+    .hero-sidebar {
+      background: rgba(255,255,255,0.035);
+      padding: 5rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-sidebar-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 2rem;
+    }
+    .hero-stat { margin-bottom: 2.5rem; }
+    .hero-stat + .hero-stat {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero-stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--dorado);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .hero-stat-label {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.45;
+    }
+
+    /* ─── PERFIL ──────────────────────────────────────────────────── */
+    #perfil {
+      background: var(--crema);
+      padding: 7rem 5rem;
+    }
+    .perfil-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+    .perfil-headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.875rem, 3vw, 2.625rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--verde-dark);
+      margin: 1rem 0 1.25rem;
+    }
+    .perfil-sub {
+      font-size: 1.0625rem;
+      color: var(--texto-soft);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+    .sintomas {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .sintoma {
+      padding: 1.25rem 1.5rem;
+      background: var(--blanco);
+      border-left: 3px solid var(--dorado);
+      font-style: italic;
+      font-family: 'Fraunces', serif;
+      font-size: 1.0625rem;
+      color: var(--texto);
+      line-height: 1.55;
+      border-radius: 0 2px 2px 0;
+    }
+    .perfil-right { padding-top: 2.5rem; }
+    .perfil-cita {
+      background: var(--verde);
+      color: var(--blanco);
+      padding: 2.5rem;
+      border-radius: 2px;
+      position: relative;
+    }
+    .perfil-cita-mark {
+      font-family: 'Fraunces', serif;
+      font-size: 5rem;
+      line-height: 0.6;
+      color: var(--dorado);
+      opacity: 0.35;
+      display: block;
+      margin-bottom: 1.25rem;
+    }
+    .perfil-cita p {
+      font-family: 'Fraunces', serif;
+      font-size: 1.1875rem;
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* ─── SERVICIOS ───────────────────────────────────────────────── */
+    #servicios {
+      background: var(--blanco);
+      padding: 7rem 5rem;
+    }
+    .servicios-header {
+      max-width: 1100px;
+      margin: 0 auto 4rem;
+    }
+    .servicios-headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.875rem, 3vw, 2.625rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--verde-dark);
+      margin: 1rem 0 0.75rem;
+      max-width: 560px;
+    }
+    .servicios-sub {
+      font-size: 1.0625rem;
+      color: var(--texto-soft);
+      max-width: 580px;
+    }
+    .servicios-list { max-width: 1100px; margin: 0 auto; }
+    .servicio-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 1fr;
+      gap: 2.5rem;
+      padding: 3rem 0;
+      border-top: 1px solid var(--linea-clara);
+      align-items: start;
+    }
+    .servicio-row:last-child { border-bottom: 1px solid var(--linea-clara); }
+    .servicio-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.75rem;
+      font-weight: 700;
+      color: var(--dorado);
+      opacity: 0.45;
+      line-height: 1;
+      padding-top: 0.25rem;
+    }
+    .servicio-sintoma {
+      font-style: italic;
+      font-family: 'Fraunces', serif;
+      font-size: 0.875rem;
+      color: var(--texto-soft);
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+    .servicio-titulo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3125rem;
+      font-weight: 600;
+      color: var(--verde-dark);
+      line-height: 1.3;
+    }
+    .servicio-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+    .servicio-items li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.9375rem;
+      color: var(--texto-soft);
+      line-height: 1.55;
+    }
+    .servicio-items li::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--dorado);
+      flex-shrink: 0;
+      margin-top: 0.6em;
+    }
+
+    /* ─── EVIDENCIA ───────────────────────────────────────────────── */
+    #evidencia {
+      background: var(--verde);
+      padding: 7rem 5rem;
+    }
+    .evidencia-inner { max-width: 1100px; margin: 0 auto; }
+    .evidencia-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: end;
+      margin-bottom: 4rem;
+    }
+    .evidencia-headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.875rem, 3vw, 2.625rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--blanco);
+      margin-top: 1rem;
+    }
+    .evidencia-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+    }
+    .casos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .caso-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      padding: 2.5rem;
+      transition: background 0.2s;
+    }
+    .caso-card:hover { background: rgba(255,255,255,0.1); }
+    .caso-sector {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dorado);
+      margin-bottom: 1rem;
+    }
+    .caso-sintoma {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 1.0625rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .caso-resultado {
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+    }
+    .caso-metrica {
+      display: block;
+      font-family: 'Fraunces', serif;
+      font-size: 1.625rem;
+      font-weight: 700;
+      color: var(--dorado);
+      margin-top: 1rem;
+    }
+    .evidencia-nota {
+      margin-top: 2.5rem;
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.35);
+      font-style: italic;
+    }
+
+    /* ─── CONTACTO ────────────────────────────────────────────────── */
+    #contacto {
+      background: var(--crema);
+      padding: 7rem 5rem;
+    }
+    .contacto-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .contacto-headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.875rem, 3vw, 2.625rem);
+      font-weight: 600;
+      color: var(--verde-dark);
+      line-height: 1.2;
+      margin: 1rem 0;
+    }
+    .contacto-sub {
+      font-size: 1.0625rem;
+      color: var(--texto-soft);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+    .contacto-ctas {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      background: #25D366;
+      color: var(--blanco);
+      font-weight: 600;
+      padding: 0.875rem 1.75rem;
+      border-radius: 2px;
+      text-decoration: none;
+      font-size: 0.9375rem;
+      transition: background 0.2s, transform 0.15s;
+      min-height: 44px;
+    }
+    .btn-whatsapp:hover { background: #12833d; transform: translateY(-1px); }
+    .btn-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.625rem;
+      border: 1.5px solid var(--verde);
+      color: var(--verde);
+      font-weight: 500;
+      padding: 0.875rem 1.75rem;
+      border-radius: 2px;
+      text-decoration: none;
+      font-size: 0.9375rem;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+      min-height: 44px;
+    }
+    .btn-email:hover { background: var(--verde); color: var(--blanco); transform: translateY(-1px); }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────── */
+    footer {
+      background: var(--verde-dark);
+      padding: 4rem 5rem 2rem;
+    }
+    .footer-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .footer-brand-name {
+      font-family: 'Fraunces', serif;
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--blanco);
+      margin-bottom: 0.75rem;
+    }
+    .footer-brand-desc {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 0.625rem;
+      margin-top: 1.5rem;
+    }
+    .footer-social a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 2px;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .footer-social a:hover { border-color: var(--dorado); color: var(--dorado); }
+    .footer-col-title {
+      font-size: 0.68rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 1rem;
+    }
+    .footer-col-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .footer-col-links a {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+    }
+    .footer-col-links a:hover { color: var(--blanco); }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-copy { font-size: 0.8125rem; color: rgba(255,255,255,0.25); }
+    .footer-country { font-size: 0.8125rem; color: rgba(255,255,255,0.25); }
+
+    /* ─── LABEL ───────────────────────────────────────────────────── */
+    .section-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dorado);
+    }
+    .section-label.light { color: rgba(255,255,255,0.45); }
+
+    /* ─── MOBILE ──────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1.5rem; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+
+      #hero { grid-template-columns: 1fr; }
+      .hero-main { padding: 4rem 1.75rem 3rem; }
+      #hero::after { display: none; }
+      .hero-sidebar {
+        padding: 3rem 1.75rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 2rem;
+        background: rgba(255,255,255,0.05);
+      }
+      .hero-sidebar-label { grid-column: 1 / -1; }
+      .hero-stat + .hero-stat { border-top: none; padding-top: 0; }
+
+      #perfil, #servicios, #evidencia, #contacto { padding: 5rem 1.75rem; }
+
+      .perfil-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .perfil-right { padding-top: 0; }
+
+      .servicios-header { margin-bottom: 2.5rem; }
+      .servicio-row {
+        grid-template-columns: 48px 1fr;
+        grid-template-rows: auto auto;
+      }
+      .servicio-row > .servicio-items { grid-column: 2; }
+
+      .evidencia-header { grid-template-columns: 1fr; gap: 1.25rem; }
+      .casos-grid { grid-template-columns: 1fr; }
+
+      footer { padding: 3rem 1.75rem 1.5rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">Grupo Oraca</div>
+    <ul class="nav-links">
+      <li><a href="#perfil">Para quién</a></li>
+      <li><a href="#servicios">Cómo trabajamos</a></li>
+      <li><a href="#evidencia">Resultados</a></li>
+      <li><a href="#contacto" class="nav-cta">Conversemos</a></li>
+    </ul>
+    <button class="nav-hamburger" aria-label="Abrir menú">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+
+  <section id="hero">
+    <div class="hero-main">
+      <p class="hero-eyebrow hero-anim hero-anim-1">Consultoría · Costa Rica</p>
+      <h1 class="hero-headline hero-anim hero-anim-2">
+        Tienen un negocio que funciona.<br>
+        <em>Para el siguiente nivel, hay que construir diferente.</em>
+      </h1>
+      <p class="hero-sub hero-anim hero-anim-3">Trabajamos con PYMEs costarricenses en el momento donde el crecimiento empieza a pedirle más de lo que puede sostener: procesos predecibles, un motor comercial propio, y un equipo con la madurez para operar de forma autónoma.</p>
+      <div class="hero-ctas hero-anim hero-anim-4">
+        <a href="#contacto" class="btn-primary">Conversemos</a>
+        <a href="#servicios" class="btn-secondary">Ver cómo trabajamos</a>
+      </div>
+    </div>
+    <div class="hero-sidebar">
+      <p class="hero-sidebar-label">Trayectoria</p>
+      <div class="hero-stat reveal d1">
+        <div class="hero-stat-num">Coaching en liderazgo y Team building</div>
+        <div class="hero-stat-label">Con más de una década impulsando la evolución empresarial, transformamos el control vertical en un liderazgo compartido que potencia el talento individual y genera la sinergia necesaria para disparar la creatividad colectiva.</div>
+      </div>
+      <div class="hero-stat reveal d2">
+        <div class="hero-stat-num">Optimización y eficiencia de Procesos</div>
+        <div class="hero-stat-label">Acompañamos a nuestros clientes en el cambio de mentalidad hacia la excelencia: optimizamos flujos de valor y creamos sistemas de mejora continua donde el factor humano es el motor de la transformación.</div>
+      </div>
+      <div class="hero-stat reveal d3">
+        <div class="hero-stat-num">Estrategia Comercial y Marketing Digital</div>
+        <div class="hero-stat-label">Diseñamos diagnósticos precisos y estrategias digitales personalizadas para maximizar el posicionamiento y la autoridad de tu marca en redes sociales.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="perfil">
+    <div class="perfil-inner">
+      <div class="perfil-left">
+        <span class="section-label reveal">¿Le suena esto?</span>
+        <h2 class="perfil-headline reveal d1">La empresa funciona. Pero lo que cuesta mantenerla así no escala.</h2>
+        <p class="perfil-sub reveal d2">La empresa creció. El problema es que el modelo detrás de ese crecimiento ya tiene techo, y ese techo ya se está sintiendo.</p>
+        <div class="sintomas">
+          <blockquote class="sintoma reveal d1">"Siempre hay algo urgente. Nunca llegamos a lo que realmente importa."</blockquote>
+          <blockquote class="sintoma reveal d2">"Los mejores clientes llegaron por mis contactos. No sé cómo crecer más allá de eso."</blockquote>
+          <blockquote class="sintoma reveal d3">"Tengo personas capaces que no terminan de funcionar como equipo."</blockquote>
+        </div>
+      </div>
+      <div class="perfil-right reveal d2">
+        <div class="perfil-cita">
+          <span class="perfil-cita-mark">"</span>
+          <p>Si alguna de esas frases le suena, ya sabe de qué momento estamos hablando. Tiene solución.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicios">
+    <div class="servicios-header">
+      <span class="section-label reveal">Cómo trabajamos</span>
+      <h2 class="servicios-headline reveal d1">Tres frentes del mismo problema.</h2>
+      <p class="servicios-sub reveal d2">Cada uno construye una parte de lo que la empresa necesita para escalar sin perder el control.</p>
+    </div>
+    <div class="servicios-list">
+
+      <div class="servicio-row reveal">
+        <div class="servicio-num">01</div>
+        <div>
+          <p class="servicio-sintoma">"Siempre hay algo urgente. Nunca llegamos a lo que realmente importa."</p>
+          <h3 class="servicio-titulo">De apagar incendios a trabajar en lo que importa</h3>
+        </div>
+        <ul class="servicio-items">
+          <li>Mapeo y rediseño de procesos</li>
+          <li>Procedimientos documentados</li>
+          <li>Sistemas de control interno</li>
+        </ul>
+      </div>
+
+      <div class="servicio-row reveal d1">
+        <div class="servicio-num">02</div>
+        <div>
+          <p class="servicio-sintoma">"Los mejores clientes llegaron por mis contactos. No sé cómo crecer más allá de eso."</p>
+          <h3 class="servicio-titulo">De vender por contactos a tener un motor comercial</h3>
+        </div>
+        <ul class="servicio-items">
+          <li>Diagnóstico comercial</li>
+          <li>Definición de canales</li>
+          <li>Estrategia y ejecución digital</li>
+        </ul>
+      </div>
+
+      <div class="servicio-row reveal d2">
+        <div class="servicio-num">03</div>
+        <div>
+          <p class="servicio-sintoma">"Tengo personas capaces que no terminan de funcionar como equipo."</p>
+          <h3 class="servicio-titulo">Personas capaces que funcionan como equipo</h3>
+        </div>
+        <ul class="servicio-items">
+          <li>Formación de líderes</li>
+          <li>Dinámicas de equipo</li>
+          <li>Cultura operativa</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="evidencia">
+    <div class="evidencia-inner">
+      <div class="evidencia-header">
+        <div>
+          <span class="section-label light reveal">Resultados</span>
+          <h2 class="evidencia-headline reveal d1">Lo que cambia cuando hay estructura.</h2>
+        </div>
+        <div>
+        </div>
+      </div>
+      <div class="casos-grid">
+        <div class="caso-card reveal d1">
+          <p class="caso-sector">[SECTOR CASO 1—Clínica de Medicina]</p>
+          <p class="caso-sintoma">SÍNTOMA INICIAL CASO 1: CONSULTORIO SATURADO PERO ESTANCADO</p>
+          <p class="caso-resultado">QUÉ CAMBIÓ: REDISEÑAMOS EL "PATIENT JOURNEY", COACHING EN TALLERES DE "LIDERAZGO DE SERVICIO" Y ESTRATEGIA COMERCIAL PARA LOGRAR EMBUDO DE VENTAS</p>    
+          <span class="caso-metrica">MÉTRICA CASO 1: 45% DE INCREMENTO EN EL LIFETIME VALUE DEL PACIENTE</span>
+        </div>
+        <div class="caso-card reveal d2">
+          <p class="caso-sector">SECTOR CASO 2—Distribución y Logística de Insumos</p>
+          <p class="caso-sintoma">SÍNTOMA INICIAL CASO 2 — EL DUEÑO SENTÍA QUE "CUANTO MÁS VENDEMOS", MÁS DINERO PERDEMOS EN PARCHES</p>
+          <p class="caso-resultado">QUÉ CAMBIÓ: NO SOLO ESCRIBIMOS MANUALES DE PROCESOS, SINCRONIZAMOS LA PROMESA COMERCIAL CON LA CAPACIDAD OPERATIVA</p>  
+          <span class="caso-metrica">MÉTRICA CASO 2: +35% INCREMENTO EN EL MARGEN OPERATIVO Y UNA REDUCCIÓN DEL 78% EN DEVOLUCIONES POR ERRORES DE DESAPACHO</span>
+        </div>
+      </div>
+      <p class="evidencia-nota reveal">Los casos se presentan de forma anónima con autorización de los clientes.</p>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="contacto-inner">
+      <span class="section-label reveal">Conversemos</span>
+      <h2 class="contacto-headline reveal d1">Una conversación primero.</h2>
+      <p class="contacto-sub reveal d2">Sin agenda de ventas. Nos contás qué está pasando, nosotros escuchamos, y vemos si tiene sentido trabajar juntos.</p>
+      <div class="contacto-ctas reveal d3">
+        <a href="https://wa.me/50672362007" class="btn-whatsapp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.107.547 4.083 1.508 5.808L0 24l6.383-1.495A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.824 9.824 0 01-5.012-1.367l-.36-.214-3.728.873.904-3.62-.235-.372A9.822 9.822 0 012.182 12C2.182 6.59 6.59 2.182 12 2.182S21.818 6.59 21.818 12 17.41 21.818 12 21.818z"/></svg>
+          WhatsApp
+        </a>
+        <a href="mailto:info@grupooraca.com" class="btn-email">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          info@grupooraca.com
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">Grupo Oraca</div>
+        <p class="footer-brand-desc">Grupo Oraca | Arquitectura de Negocios Sincronizada: Integramos la Optimización de Procesos con 
+Estrategias Comerciales de alto impacto y la Capacitación de Equipos bajo un enfoque 
+sistémico.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/grupo_oraca/" target="_blank" aria-label="Instagram">
+           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+
+          <a href="https://www.facebook.com/grupooraca/" target="_blank" aria-label="Facebook">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+            </svg>
+          </a>
+
+          <a href="https://www.tiktok.com/@grupo.oraca?_r=1&_t=ZS-95Gd37G6DVl" target="_blank" aria-label="TikTok">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.82 1.55V6.79a4.85 4.85 0 01-1.05-.1z"/>
+            </svg>
+          </a>
+
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-title">Servicios</p>
+        <ul class="footer-col-links">
+          <li><a href="#servicios">Procesos y estructura</a></li>
+          <li><a href="#servicios">Motor comercial</a></li>
+          <li><a href="#servicios">Equipo y liderazgo</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Nosotros</p>
+        <ul class="footer-col-links">
+          <li><a href="#perfil">Para quién</a></li>
+          <li><a href="#evidencia">Resultados</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Contacto</p>
+        <ul class="footer-col-links">
+          <li><a href="mailto:info@grupooraca.com">info@grupooraca.com</a></li>
+          <li><a href="https://wa.me/50672362007">WhatsApp</a></li>
+          <li><a href="#">Costa Rica</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Grupo Oraca Costa Rica. Todos los derechos reservados.</p>
+      <p class="footer-country">Costa Rica</p>
+    </div>
+  </footer>
+
+  <script>
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    revealEls.forEach(el => revealObserver.observe(el));
+  </script>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
